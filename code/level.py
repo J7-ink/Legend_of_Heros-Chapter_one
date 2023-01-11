@@ -10,27 +10,26 @@ from debug import *
 from weapon import Weapon
 from ui import UI
 from enemy import Enemy
+from particles import AnimationPlayer
 
 
 class Level:
     def __init__(self):
         # get the display surface
         self.display_surface = pygame.display.get_surface()
-
         # sprite group setup
         self.visible_sprites = YSortCameraGroup()
         self.obstacle_sprites = pygame.sprite.Group()
-
         # attack sprites
         self.current_attack = None
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
-
         # sprite setup
         self.map_make()
-
         # user interface
         self.ui = UI()
+        # particles
+        self.animation_player = AnimationPlayer( )
 
     def map_make(self):
         layouts = {
@@ -127,6 +126,8 @@ class Level:
                 if collision_sprites:
                     for target_sprite in collision_sprites:
                         if target_sprite.sprite_type == 'grass':
+                            pos = target_sprite.rect.center
+                            self.animation_player.create_grass_particles(pos=pos, groups=[self.visible_sprites])
                             target_sprite.kill()
                         else:
                             target_sprite.get_damage(self.player, attack_sprite.sprite_type)
